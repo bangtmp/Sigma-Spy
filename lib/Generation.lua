@@ -1,11 +1,13 @@
 local Generation = {}
 
 type table = {
-	[any]: any
+	[any]: any,
 }
 
 --// Libraries
-local ParserModule = loadstring(game:HttpGet('https://raw.githubusercontent.com/depthso/Roblox-parser/refs/heads/main/main.lua'))()
+local ParserModule = loadstring(
+	game:HttpGet("https://raw.githubusercontent.com/bangtmp/Sigma-Spy/refs/heads/main/lib/Roblox-parser.lua")
+)()
 
 --// Parser
 function ParserModule:Import(Name: string)
@@ -21,7 +23,7 @@ local Hook
 local ThisScript = script
 
 function Generation:Init(Configuration: table)
-    local Modules = Configuration.Modules
+	local Modules = Configuration.Modules
 
 	--// Modules
 	Config = Modules.Config
@@ -37,7 +39,9 @@ function Generation:GetBase(Module): string
 
 	--// Generate variables code
 	Code ..= Module.Parser:MakeVariableCode({
-		"Services", "Variables", "Remote"
+		"Services",
+		"Variables",
+		"Remote",
 	})
 
 	return Code
@@ -49,7 +53,9 @@ function Generation:GetSwaps()
 
 	local Interface = {}
 	function Interface:AddSwap(Object: Instance, Data: table)
-		if not Object then return end
+		if not Object then
+			return
+		end
 		Swaps[Object] = Data
 	end
 
@@ -86,7 +92,7 @@ type RemoteScript = {
 	Remote: Instance,
 	IsReceive: boolean?,
 	Args: table,
-	Method: string
+	Method: string,
 }
 function Generation:RemoteScript(Module, Data: RemoteScript): string
 	local Remote = Data.Remote
@@ -96,34 +102,34 @@ function Generation:RemoteScript(Module, Data: RemoteScript): string
 
 	local ClassName = Hook:Index(Remote, "ClassName")
 	local IsNilParent = Hook:Index(Remote, "Parent") == nil
-	
+
 	local Variables = Module.Variables
 	local Formatter = Module.Formatter
 	local Parser = Module.Parser
-	
+
 	--// Pre-render variables
-	Variables:PrerenderVariables(Args, {"Instance"})
+	Variables:PrerenderVariables(Args, { "Instance" })
 
 	--// Parse arguments
 	local ParsedArgs, ItemsCount = Parser:ParseTableIntoString({
 		NoBrackets = true,
-		Table = Args
+		Table = Args,
 	})
 
 	--// Create remote variable
 	local RemoteVariable = Variables:MakeVariable({
 		Value = Formatter:Format(Remote, {
-			NoVariableCreate = true
+			NoVariableCreate = true,
 		}),
 		Comment = IsNilParent and "Remote parent is nil" or ClassName,
 		Lookup = Remote,
 		Name = Formatter:MakeName(Remote), --ClassName,
-		Class = "Remote"
+		Class = "Remote",
 	})
 
 	--// Make code
 	local Code = self:GetBase(Module)
-	
+
 	--// Firesignal script for client recieves
 	if IsReceive then
 		local Second = ItemsCount == 0 and "" or `, {ParsedArgs}`
@@ -133,7 +139,7 @@ function Generation:RemoteScript(Module, Data: RemoteScript): string
 		Code ..= `\nfiresignal({Signal}{Second})`
 		return Code
 	end
-	
+
 	--// Remote invoke script
 	Code ..= `\n{RemoteVariable}:{Method}({ParsedArgs})`
 	return Code
@@ -148,13 +154,15 @@ function Generation:ConnectionsTable(Signal: RBXScriptSignal): table
 		local Script = rawget(getfenv(Function), "script")
 
 		--// Skip if self
-		if Script == ThisScript then continue end
+		if Script == ThisScript then
+			continue
+		end
 
 		--// Connection data
 		local Data = {
 			Function = Function,
 			State = Connection.State,
-			Script = Script
+			Script = Script,
 		}
 
 		table.insert(DataArray, Data)
@@ -167,11 +175,11 @@ function Generation:TableScript(Table: table)
 	local Module = self:NewParser()
 
 	--// Pre-render variables
-	Module.Variables:PrerenderVariables(Table, {"Instance"})
+	Module.Variables:PrerenderVariables(Table, { "Instance" })
 
 	--// Parse arguments
 	local ParsedTable = Module.Parser:ParseTableIntoString({
-		Table = Table
+		Table = Table,
 	})
 
 	--// Generate script

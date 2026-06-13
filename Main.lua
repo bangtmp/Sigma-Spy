@@ -17,10 +17,10 @@
     https://github.com/depthso
 ]]
 
---// File handling configuration 
+--// File handling configuration
 local FilesConfig = {
 	UseWorkspace = false,
-	RepoUrl = "https://raw.githubusercontent.com/depthso/Sigma-Spy/refs/heads/main" -- "http://127.0.0.1:3000"
+	RepoUrl = "https://raw.githubusercontent.com/bangtmp/Sigma-Spy/refs/heads/main", -- "http://127.0.0.1:3000"
 }
 
 --// Service handlers
@@ -46,7 +46,7 @@ end
 local Files = loadstring(FilesScript)()
 Files:PushConfig(FilesConfig)
 Files:Init({
-	Services = Services
+	Services = Services,
 })
 
 --// Modules
@@ -61,7 +61,7 @@ local Scripts = {
 	Flags = Files:GetModule("lib/Flags"),
 	Ui = Files:GetModule("lib/Ui"),
 	Generation = Files:GetModule("lib/Generation"),
-	Communication = Files:GetModule("lib/Communication")
+	Communication = Files:GetModule("lib/Communication"),
 }
 
 --// Dependencies
@@ -94,7 +94,7 @@ ActorCode ..= [=[
 --// Load modules
 Files:LoadModules(Modules, {
 	Modules = Modules,
-	Services = Services
+	Services = Services,
 })
 
 --// ReGui Create window
@@ -102,7 +102,7 @@ local Window = Ui:CreateWindow()
 
 --// Check if Sigma spy is supported
 local Supported = Process:CheckIsSupported()
-if not Supported then 
+if not Supported then
 	Window:Close()
 	return
 end
@@ -115,7 +115,7 @@ Generation:SetSwapsCallback(function(self)
 	})
 	self:AddSwap(LocalPlayer.Character, {
 		String = "Character",
-		NextParent = LocalPlayer
+		NextParent = LocalPlayer,
 	})
 end)
 
@@ -124,7 +124,7 @@ Ui:ShowModal({
 	"<b>Attention!</b>",
 	"Sigma Spy is in BETA, please expect issues\n",
 	"Report any issues to the Github page (depthso/Sigma-Spy)\n",
-	"Many thanks!"
+	"Many thanks!",
 })
 
 --// Create window content
@@ -150,7 +150,9 @@ Hook:MultiConnect(getnilinstances())
 
 --// Search for remotes
 for _, Service in next, game:GetChildren() do
-	if table.find(BlackListedServices, Service.ClassName) then continue end
+	if table.find(BlackListedServices, Service.ClassName) then
+		continue
+	end
 	Hook:MultiConnect(Service:GetDescendants())
 end
 
