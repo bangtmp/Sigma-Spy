@@ -138,9 +138,7 @@ function Ui:LoadReGui()
 
 	print(PrefabsId)
 
-	ReGui:Init({
-		Prefabs = InsertService:LoadLocalAsset(PrefabsId),
-	})
+	ReGui:Init()
 end
 
 function Ui:Init(Data)
