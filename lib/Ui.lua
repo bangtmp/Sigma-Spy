@@ -55,8 +55,7 @@ type Log = {
 local SetClipboard = setclipboard or toclipboard or set_clipboard
 
 --// Libraries
-local ReGui =
-	loadstring(game:HttpGet("https://raw.githubusercontent.com/myethg/Dear-ReGui/refs/heads/main/ReGui.lua"))()
+local ReGui = loadstring(game:HttpGet("https://raw.githubusercontent.com/Sweakss/ReGUI/refs/heads/main/ReGUI.lua"))()
 local IDEModule =
 	loadstring(game:HttpGet("https://raw.githubusercontent.com/myethg/Dear-ReGui/refs/heads/main/lib/ide.lua"))()
 
@@ -134,11 +133,8 @@ function Ui:LoadReGui()
 	ThemeConfig.TextFont = TextFont
 
 	--// ReGui
-	local PrefabsId = "rbxassetid://114274480373566"
+	local PrefabsId = "rbxassetid://" .. ReGui.PrefabsId
 	ReGui:DefineTheme("SigmaSpy", ThemeConfig)
-
-	print("Cached")
-
 	ReGui:Init({
 		-- Prefabs = InsertService:LoadLocalAsset(PrefabsId),
 	})
