@@ -134,7 +134,7 @@ function Ui:LoadReGui()
 	ThemeConfig.TextFont = TextFont
 
 	--// ReGui
-	local PrefabsId = "rbxassetid://" .. ReGui.PrefabsId
+	local PrefabsId = "rbxassetid://114274480373566"
 	ReGui:DefineTheme("SigmaSpy", ThemeConfig)
 	ReGui:Init({
 		Prefabs = InsertService:LoadLocalAsset(PrefabsId),
