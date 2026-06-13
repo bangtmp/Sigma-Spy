@@ -1,37 +1,37 @@
 local Ui = {
 	DefaultEditorContent = "--Welcome to Sigma Spy",
 
-    SeasonLabels = { 
-        January = "⛄%s⛄", 
-        February = "🌨️%s🏂", 
-        March = "🌹%s🌺", 
-        April = "🐣%s✝️", 
-        May = "🐝%s🌞", 
-        June = "🪴%s🥕", 
-        July = "🌊%s🏖️", 
-        August = "☀️%s🌞", 
-        September = "🍁%s🍁", 
-        October = "🎃%s🎃", 
-        November = "🍂%s🍂", 
-        December = "🎄%s🎁"
-    },
-    BaseConfig = {
-        Theme = "SigmaSpy",
-        Size = UDim2.fromOffset(600, 400),
-        NoScroll = true,
-    },
+	SeasonLabels = {
+		January = "⛄%s⛄",
+		February = "🌨️%s🏂",
+		March = "🌹%s🌺",
+		April = "🐣%s✝️",
+		May = "🐝%s🌞",
+		June = "🪴%s🥕",
+		July = "🌊%s🏖️",
+		August = "☀️%s🌞",
+		September = "🍁%s🍁",
+		October = "🎃%s🎃",
+		November = "🍂%s🍂",
+		December = "🎄%s🎁",
+	},
+	BaseConfig = {
+		Theme = "SigmaSpy",
+		Size = UDim2.fromOffset(600, 400),
+		NoScroll = true,
+	},
 	OptionTypes = {
 		boolean = "Checkbox",
 	},
 
-    Window = nil,
-    RandomSeed = Random.new(tick()),
-	Logs = setmetatable({}, {__mode = "k"}),
-	LogQueue = setmetatable({}, {__mode = "v"}),
-} 
+	Window = nil,
+	RandomSeed = Random.new(tick()),
+	Logs = setmetatable({}, { __mode = "k" }),
+	LogQueue = setmetatable({}, { __mode = "v" }),
+}
 
 type table = {
-	[any]: any
+	[any]: any,
 }
 
 type Log = {
@@ -48,15 +48,17 @@ type Log = {
 	RemoteData: table?,
 	Id: string,
 	Selectable: table,
-	HeaderData: table
+	HeaderData: table,
 }
 
 --// Compatibility
 local SetClipboard = setclipboard or toclipboard or set_clipboard
 
 --// Libraries
-local ReGui = loadstring(game:HttpGet('https://raw.githubusercontent.com/depthso/Dear-ReGui/refs/heads/main/ReGui.lua'))()
-local IDEModule = loadstring(game:HttpGet('https://raw.githubusercontent.com/depthso/Dear-ReGui/refs/heads/main/lib/ide.lua'))()
+local ReGui =
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/myethg/Dear-ReGui/refs/heads/main/ReGui.lua"))()
+local IDEModule =
+	loadstring(game:HttpGet("https://raw.githubusercontent.com/myethg/Dear-ReGui/refs/heads/main/lib/ide.lua"))()
 
 --// Services
 local InsertService: InsertService
@@ -65,7 +67,7 @@ local InsertService: InsertService
 local Flags
 local Generation
 local Process
-local Hook 
+local Hook
 local Config
 
 local ActiveData = nil
@@ -87,19 +89,23 @@ function Ui:SetClipboard(Content: string)
 end
 
 function Ui:TurnSeasonal(Text: string): string
-    local SeasonLabels = self.SeasonLabels
-    local Month = os.date("%B")
-    local Base = SeasonLabels[Month]
+	local SeasonLabels = self.SeasonLabels
+	local Month = os.date("%B")
+	local Base = SeasonLabels[Month]
 
-    return Base:format(Text)
+	return Base:format(Text)
 end
 
 function Ui:SetFont(FontJsonFile: string, FontContent: string)
-	if not FontJsonFile then return end
+	if not FontJsonFile then
+		return
+	end
 
 	--// Check if the font downloaded successfully
 	FontSuccess = FontContent ~= ""
-	if not FontSuccess then return end
+	if not FontSuccess then
+		return
+	end
 
 	--// Load fontface
 	local AssetId = getcustomasset(FontJsonFile, false)
@@ -108,7 +114,9 @@ function Ui:SetFont(FontJsonFile: string, FontContent: string)
 end
 
 function Ui:FontWasSuccessful()
-	if FontSuccess then return end
+	if FontSuccess then
+		return
+	end
 
 	--// Switch to DarkTheme instead of the ImGui theme
 	local Window = self.Window
@@ -117,7 +125,7 @@ function Ui:FontWasSuccessful()
 	self:ShowModal({
 		"Unfortunately your executor was unable to download the font and therefore switched to the Dark theme",
 		"\nIf you would like to use the ImGui theme, \nplease download the font (assets/ProggyClean.ttf)",
-		"and put put it in your workspace folder\n(Sigma Spy/assets)"
+		"and put put it in your workspace folder\n(Sigma Spy/assets)",
 	})
 end
 
@@ -129,12 +137,12 @@ function Ui:LoadReGui()
 	local PrefabsId = "rbxassetid://" .. ReGui.PrefabsId
 	ReGui:DefineTheme("SigmaSpy", ThemeConfig)
 	ReGui:Init({
-		Prefabs = InsertService:LoadLocalAsset(PrefabsId)
+		Prefabs = InsertService:LoadLocalAsset(PrefabsId),
 	})
 end
 
 function Ui:Init(Data)
-    local Modules = Data.Modules
+	local Modules = Data.Modules
 	local Services = Data.Services
 
 	--// Services
@@ -153,7 +161,7 @@ end
 type CreateButtons = {
 	Base: table,
 	Buttons: table,
-	NoTable: boolean?
+	NoTable: boolean?,
 }
 function Ui:CreateButtons(Parent, Data: CreateButtons)
 	local Base = Data.Base
@@ -163,7 +171,7 @@ function Ui:CreateButtons(Parent, Data: CreateButtons)
 	--// Create table layout
 	if not NoTable then
 		Parent = Parent:Table({
-			MaxColumns = 3
+			MaxColumns = 3,
 		}):NextRow()
 	end
 
@@ -180,12 +188,12 @@ function Ui:CreateButtons(Parent, Data: CreateButtons)
 end
 
 function Ui:CreateWindow()
-    local BaseConfig = self.BaseConfig
+	local BaseConfig = self.BaseConfig
 
 	--// Create Window
-    local Window = ReGui:Window(BaseConfig)
-    self.Window = Window
-    self:AuraCounterService()
+	local Window = ReGui:Window(BaseConfig)
+	self.Window = Window
+	self:AuraCounterService()
 
 	--// Check if the font was successfully downloaded
 	self:FontWasSuccessful()
@@ -203,12 +211,12 @@ function Ui:ShowModal(Lines: table)
 	local Message = table.concat(Lines, "\n")
 
 	local ModalWindow = Window:PopupModal({
-		Title = "Sigma Spy"
+		Title = "Sigma Spy",
 	})
 	ModalWindow:Label({
 		Text = Message,
 		RichText = true,
-		TextWrapped = true
+		TextWrapped = true,
 	})
 	ModalWindow:Button({
 		Text = "Okay",
@@ -221,7 +229,7 @@ end
 function Ui:ShowUnsupported(FuncName: string)
 	Ui:ShowModal({
 		"Unfortunately Sigma Spy is not supported on your executor",
-		`\n\nMissing function: {FuncName}`
+		`\n\nMissing function: {FuncName}`,
 	})
 end
 
@@ -237,9 +245,11 @@ function Ui:CreateOptionsForDict(Parent, Dict: table, Callback)
 				Dict[Key] = Value
 
 				--// Invoke callback
-				if not Callback then return end
+				if not Callback then
+					return
+				end
 				Callback()
-			end
+			end,
 		}
 	end
 
@@ -248,11 +258,13 @@ function Ui:CreateOptionsForDict(Parent, Dict: table, Callback)
 end
 
 function Ui:CheckKeybindLayout(Container, KeyCode: Enum.KeyCode, Callback)
-	if not KeyCode then return Container end
+	if not KeyCode then
+		return Container
+	end
 
 	--// Create Row layout
 	Container = Container:Row({
-		HorizontalFlex = Enum.UIFlexAlignment.SpaceBetween
+		HorizontalFlex = Enum.UIFlexAlignment.SpaceBetween,
 	})
 
 	--// Add Keybind element
@@ -263,7 +275,9 @@ function Ui:CheckKeybindLayout(Container, KeyCode: Enum.KeyCode, Callback)
 		Callback = function()
 			--// Check if keybinds are enabled
 			local Enabled = Flags:GetFlagValue("KeybindsEnabled")
-			if not Enabled then return end
+			if not Enabled then
+				return
+			end
 
 			--// Invoke callback
 			Callback()
@@ -275,10 +289,10 @@ end
 
 function Ui:CreateElements(Parent, Options)
 	local OptionTypes = self.OptionTypes
-	
+
 	--// Create table layout
 	local Table = Parent:Table({
-		MaxColumns = 3
+		MaxColumns = 3,
 	}):NextRow()
 
 	for Name, Data in next, Options do
@@ -290,7 +304,7 @@ function Ui:CreateElements(Parent, Options)
 			Class = OptionTypes[Type],
 			Label = Name,
 		})
-		
+
 		--// Check if a element type exists for value type
 		local Class = Data.Class
 		assert(Class, `No {Type} type exists for option`)
@@ -303,7 +317,7 @@ function Ui:CreateElements(Parent, Options)
 		Container = self:CheckKeybindLayout(Container, Keybind, function()
 			Checkbox:Toggle()
 		end)
-		
+
 		--// Create column and element
 		Checkbox = Container[Class](Container, Data)
 	end
@@ -311,49 +325,49 @@ end
 
 --// Boiiii what did you say about Sigma Spy 💀💀
 function Ui:DisplayAura()
-    local Window = self.Window
-    local Rand = self.RandomSeed
+	local Window = self.Window
+	local Rand = self.RandomSeed
 
-    local AURA = Rand:NextInteger(1, 9999999)
-    local AURADELAY = Rand:NextInteger(1, 5)
+	local AURA = Rand:NextInteger(1, 9999999)
+	local AURADELAY = Rand:NextInteger(1, 5)
 
 	local Title = ` Sigma Spy - Depso | AURA: {AURA} `
 	local Seasonal = self:TurnSeasonal(Title)
-    Window:SetTitle(Seasonal)
+	Window:SetTitle(Seasonal)
 
-    wait(AURADELAY)
+	wait(AURADELAY)
 end
 
 function Ui:AuraCounterService()
-    task.spawn(function()
-        while true do
-            self:DisplayAura()
-        end
-    end)
+	task.spawn(function()
+		while true do
+			self:DisplayAura()
+		end
+	end)
 end
 
 function Ui:CreateWindowContent(Window)
-    --// Window group
-    local Layout = Window:List({
-        UiPadding = 2,
-        HorizontalFlex = Enum.UIFlexAlignment.Fill,
-        VerticalFlex = Enum.UIFlexAlignment.Fill,
-        FillDirection = Enum.FillDirection.Vertical,
-        Fill = true
-    })
+	--// Window group
+	local Layout = Window:List({
+		UiPadding = 2,
+		HorizontalFlex = Enum.UIFlexAlignment.Fill,
+		VerticalFlex = Enum.UIFlexAlignment.Fill,
+		FillDirection = Enum.FillDirection.Vertical,
+		Fill = true,
+	})
 
-    self.RemotesList = Layout:Canvas({
-        Scroll = true,
-        UiPadding = 5,
-        AutomaticSize = Enum.AutomaticSize.None,
-        FlexMode = Enum.UIFlexMode.None,
-        Size = UDim2.new(0, 130, 1, 0)
-    })
+	self.RemotesList = Layout:Canvas({
+		Scroll = true,
+		UiPadding = 5,
+		AutomaticSize = Enum.AutomaticSize.None,
+		FlexMode = Enum.UIFlexMode.None,
+		Size = UDim2.new(0, 130, 1, 0),
+	})
 
 	local InfoSelector = Layout:TabSelector({
-        NoAnimation = true,
-        Size = UDim2.new(1, -130, 0.4, 0),
-    })
+		NoAnimation = true,
+		Size = UDim2.new(1, -130, 0.4, 0),
+	})
 
 	self:MakeEditorTab(InfoSelector, Window)
 	self:MakeOptionsTab(InfoSelector)
@@ -364,11 +378,11 @@ end
 function Ui:MakeOptionsTab(InfoSelector)
 	--// TabSelector
 	local OptionsTab = InfoSelector:CreateTab({
-		Name = "Options"
+		Name = "Options",
 	})
 
 	--// Add global options
-	OptionsTab:Separator({Text="Logs"})
+	OptionsTab:Separator({ Text = "Logs" })
 	self:CreateButtons(OptionsTab, {
 		Base = {
 			Size = UDim2.new(1, 0, 0, 20),
@@ -401,32 +415,34 @@ function Ui:MakeOptionsTab(InfoSelector)
 				Callback = function()
 					Process:UpdateAllRemoteData("Excluded", false)
 				end,
-			}
-		}
+			},
+		},
 	})
 
 	--// Flag options
-	OptionsTab:Separator({Text="Settings"})
+	OptionsTab:Separator({ Text = "Settings" })
 	self:CreateElements(OptionsTab, Flags:GetFlags())
 
 	self:AddDetailsSection(OptionsTab)
 end
 
 function Ui:AddDetailsSection(OptionsTab)
-	OptionsTab:Separator({Text="Infomation"})
+	OptionsTab:Separator({ Text = "Infomation" })
 	OptionsTab:BulletText({
 		Rows = {
 			"Sigma spy - Created by depso!",
 			"Thank you to syn for your suggestions and testing",
 			"I wish potassium wasn't so crudely produced",
-			"Boiiiiii what did you say about Sigma Spy 💀💀 (+999999 AURA)"
-		}
+			"Boiiiiii what did you say about Sigma Spy 💀💀 (+999999 AURA)",
+		},
 	})
 end
 
 local function MakeActiveDataCallback(Func: string)
 	return function()
-		if not ActiveData then return end
+		if not ActiveData then
+			return
+		end
 		return ActiveData[Func](ActiveData)
 	end
 end
@@ -441,11 +457,11 @@ function Ui:MakeEditorTab(InfoSelector, Window)
 		FontSize = 13,
 		Colors = SyntaxColors,
 		FontFace = TextFont,
-		Text = Default
+		Text = Default,
 	})
-	
+
 	local EditorTab = InfoSelector:CreateTab({
-		Name = "Editor"
+		Name = "Editor",
 	})
 
 	--// Configure IDE frame
@@ -459,7 +475,7 @@ function Ui:MakeEditorTab(InfoSelector, Window)
 			Active = true,
 			Parent = EditorTab:GetObject(),
 			BackgroundTransparency = 1,
-		}
+		},
 	})
 
 	--// Buttons
@@ -473,27 +489,27 @@ function Ui:MakeEditorTab(InfoSelector, Window)
 				Callback = function()
 					local Script = CodeEditor:GetText()
 					Ui:SetClipboard(Script)
-				end
+				end,
 			},
 			{
 				Text = "Repeat call",
-				Callback = MakeActiveDataCallback("RepeatCall")
+				Callback = MakeActiveDataCallback("RepeatCall"),
 			},
 			{
 				Text = "Get return",
-				Callback = MakeActiveDataCallback("GetReturn")
+				Callback = MakeActiveDataCallback("GetReturn"),
 			},
 			{
 				Text = "Generate info",
-				Callback = MakeActiveDataCallback("GenerateInfo")
+				Callback = MakeActiveDataCallback("GenerateInfo"),
 			},
 			{
 				Text = "Decompile script",
-				Callback = MakeActiveDataCallback("Decompile")
-			}
-		}
+				Callback = MakeActiveDataCallback("Decompile"),
+			},
+		},
 	})
-	
+
 	self.CodeEditor = CodeEditor
 end
 
@@ -506,9 +522,9 @@ function Ui:SetFocusedRemote(Data)
 		"CallingScript",
 		"CallingActor",
 		"IsActor",
-		"Id"
+		"Id",
 	}
-	
+
 	--// Unpack remote data
 	local Remote = Data.Remote
 	local Method = Data.Method
@@ -530,7 +546,7 @@ function Ui:SetFocusedRemote(Data)
 	local InfoSelector = self.InfoSelector
 	local CodeEditor = self.CodeEditor
 	local TabFocused = false
-	
+
 	--// Remote previous remote tab
 	if ActiveData then
 		local Tab = ActiveData.Tab
@@ -577,29 +593,29 @@ function Ui:SetFocusedRemote(Data)
 	end
 	function Data:GenerateInfo()
 		--// Reject client events
-		if IsReceive then 
+		if IsReceive then
 			local Script = "-- Boiiiii what did you say about IsReceive (-9999999 AURA)\n"
 			Script ..= "\n-- Voice message: ▶ .ılıılıılıılıılıılı. 0:69\n"
 
 			SetIDEText(Script)
-			return 
+			return
 		end
-		
+
 		local Connections = {}
 		local FunctionInfo = {
 			["Script"] = {
 				["SourceScript"] = SourceScript,
-				["CallingScript"] = Script
+				["CallingScript"] = Script,
 			},
 			["Remote"] = {
 				["Remote"] = Remote,
 				["RemoteID"] = Id,
-				["Method"] = Method
+				["Method"] = Method,
 			},
 			["MetaMethod"] = MetaMethod,
 			["IsActor"] = Data.IsActor,
 			["CallingFunction"] = Function,
-			["Connections"] = Connections
+			["Connections"] = Connections,
 		}
 
 		--// Some closures may not be lua
@@ -607,7 +623,7 @@ function Ui:SetFocusedRemote(Data)
 			FunctionInfo["UpValues"] = debug.getupvalues(Function)
 			FunctionInfo["Constants"] = debug.getconstants(Function)
 		end
-		
+
 		--// Get remote connections
 		local ReceiveMethods = ClassData.Receive
 		for _, Method: string in next, ReceiveMethods do
@@ -623,13 +639,13 @@ function Ui:SetFocusedRemote(Data)
 	end
 	function Data:Decompile()
 		--// Check if decompile function exists
-		if not decompile then 
+		if not decompile then
 			SetIDEText("--Exploit is missing 'decompile' function (-9999999 AURA)")
-			return 
+			return
 		end
 
 		--// Check if script exists
-		if not Script then 
+		if not Script then
 			SetIDEText("--Script is missing (-9999999 AURA)")
 			return
 		end
@@ -639,7 +655,7 @@ function Ui:SetFocusedRemote(Data)
 		--// Decompile script
 		local Decompiled = decompile(Script)
 		local Source = "--BOOIIII THIS IS SO TUFF FLIPPY SKIBIDI AURA (SIGMA SPY)\n"
-		Source ..=  Decompiled
+		Source ..= Decompiled
 
 		SetIDEText(Source)
 	end
@@ -647,14 +663,14 @@ function Ui:SetFocusedRemote(Data)
 	--// Create remote details tab
 	local Tab = InfoSelector:CreateTab({
 		Name = `Remote: {Remote}`,
-		Focused = TabFocused
+		Focused = TabFocused,
 	})
 	Data.Tab = Tab
-	
+
 	--// Create new parser
 	local Module = Generation:NewParser()
 	local Parser = Module.Parser
-	
+
 	--// RemoteOptions
 	self:CreateOptionsForDict(Tab, RemoteData, function()
 		Process:UpdateRemoteData(Id, RemoteData)
@@ -672,7 +688,7 @@ function Ui:SetFocusedRemote(Data)
 				Callback = function()
 					SetClipboard(Parser:MakePathString({
 						Object = Script,
-						NoVariables = true
+						NoVariables = true,
 					}))
 				end,
 			},
@@ -681,7 +697,7 @@ function Ui:SetFocusedRemote(Data)
 				Callback = function()
 					SetClipboard(Parser:MakePathString({
 						Object = Remote,
-						NoVariables = true
+						NoVariables = true,
 					}))
 				end,
 			},
@@ -693,41 +709,43 @@ function Ui:SetFocusedRemote(Data)
 					HeaderData:Remove()
 					ActiveData = nil
 				end,
-			}
-		}
+			},
+		},
 	})
 
 	--// Remote infomation
-	local Rows = {"Name", "Value"}
+	local Rows = { "Name", "Value" }
 	local DataTable = Tab:Table({
 		Border = true,
 		RowBackground = true,
-		MaxColumns = 2
+		MaxColumns = 2,
 	})
 
 	--// Table headers
 	local HeaderRow = DataTable:HeaderRow()
 	for _, Catagory in Rows do
 		local Column = HeaderRow:NextColumn()
-		Column:Label({Text=Catagory})
+		Column:Label({ Text = Catagory })
 	end
 
 	--// Table layout
 	for RowIndex, Name in Display do
 		local Row = DataTable:Row()
-		
+
 		--// Create Columns
 		for Count, Catagory in Rows do
 			local Column = Row:NextColumn()
-			
+
 			--// Value text
 			local Value = Catagory == "Name" and Name or Data[Name]
-			if not Value then continue end
+			if not Value then
+				continue
+			end
 
-			Column:Label({Text=`{Value}`})
+			Column:Label({ Text = `{Value}` })
 		end
 	end
-	
+
 	--// Generate script
 	local Parsed = Generation:RemoteScript(Module, Data)
 	SetIDEText(Parsed)
@@ -747,11 +765,13 @@ function Ui:GetRemoteHeader(Data: Log)
 
 	--// Check for existing TreeNode
 	local Existing = Logs[Id]
-	if Existing then return Existing end
+	if Existing then
+		return Existing
+	end
 
 	--// Header data
-	local HeaderData = {	
-		LogCount = 0
+	local HeaderData = {
+		LogCount = 0,
 	}
 
 	--// Increment treenode count
@@ -761,7 +781,7 @@ function Ui:GetRemoteHeader(Data: Log)
 	if not NoTreeNodes then
 		HeaderData.TreeNode = RemotesList:TreeNode({
 			LayoutOrder = -1 * RemotesCount,
-			Title = `{Remote}`
+			Title = `{Remote}`,
 		})
 	end
 
@@ -801,18 +821,20 @@ end
 
 function Ui:QueueLog(Data)
 	local LogQueue = self.LogQueue
-    table.insert(LogQueue, Data)
+	table.insert(LogQueue, Data)
 end
 
 function Ui:ProcessLogQueue()
 	local Queue = self.LogQueue
-    if #Queue <= 0 then return end
+	if #Queue <= 0 then
+		return
+	end
 
 	--// Create a log element for each in the Queue
-    for Index, Data in next, Queue do
-        self:CreateLog(Data)
-        table.remove(Queue, Index)
-    end
+	for Index, Data in next, Queue do
+		self:CreateLog(Data)
+		table.remove(Queue, Index)
+	end
 end
 
 function Ui:BeginLogService()
@@ -826,39 +848,49 @@ end
 
 function Ui:CreateLog(Data: Log)
 	--// Unpack log data
-    local Remote = Data.Remote
+	local Remote = Data.Remote
 	local Method = Data.Method
-    local Args = Data.Args
-    local IsReceive = Data.IsReceive
+	local Args = Data.Args
+	local IsReceive = Data.IsReceive
 	local Id = Data.Id
-	
+
 	local IsNilParent = Hook:Index(Remote, "Parent") == nil
 	local RemoteData = Process:GetRemoteData(Id)
 
 	--// Paused
 	local Paused = Flags:GetFlagValue("Paused")
-	if Paused then return end
+	if Paused then
+		return
+	end
 
 	--// Check caller (Ignore exploit calls)
 	local CheckCaller = Flags:GetFlagValue("CheckCaller")
-	if CheckCaller and not checkcaller() then return end
+	if CheckCaller and not checkcaller() then
+		return
+	end
 
 	--// IgnoreNil
 	local IgnoreNil = Flags:GetFlagValue("IgnoreNil")
-	if IgnoreNil and IsNilParent then return end
+	if IgnoreNil and IsNilParent then
+		return
+	end
 
-    --// LogRecives check
+	--// LogRecives check
 	local LogRecives = Flags:GetFlagValue("LogRecives")
-	if not LogRecives and IsReceive then return end
+	if not LogRecives and IsReceive then
+		return
+	end
 
 	--// NoTreeNodes
 	local NoTreeNodes = Flags:GetFlagValue("NoTreeNodes")
 
-    --// Excluded check
-    if RemoteData.Excluded then return end
+	--// Excluded check
+	if RemoteData.Excluded then
+		return
+	end
 
 	--// Deep clone data
-	local ClonedArgs = DeepCloneTable({unpack(Args)})
+	local ClonedArgs = DeepCloneTable({ unpack(Args) })
 	Data.Args = ClonedArgs
 
 	local Color = Config.MethodColors[Method:lower()]
@@ -869,7 +901,7 @@ function Ui:CreateLog(Data: Log)
 	if FindString then
 		for _, Arg in next, ClonedArgs do
 			if typeof(Arg) == "string" then
-				Text = `{Arg:sub(1,15)} | {Text}`
+				Text = `{Arg:sub(1, 15)} | {Text}`
 				break
 			end
 		end
@@ -880,7 +912,7 @@ function Ui:CreateLog(Data: Log)
 	local RemotesList = self.RemotesList
 
 	local LogCount = HeaderData.LogCount
-	local TreeNode = HeaderData.TreeNode 
+	local TreeNode = HeaderData.TreeNode
 	local Parent = TreeNode or RemotesList
 
 	--// Increase log count - TreeNodes are in GetRemoteHeader function
@@ -889,19 +921,19 @@ function Ui:CreateLog(Data: Log)
 		LogCount = RemotesCount
 	end
 
-    local function SetFocused()
+	local function SetFocused()
 		self:SetFocusedRemote(Data)
-    end
+	end
 
-    --// Create focus button
+	--// Create focus button
 	Data.HeaderData = HeaderData
 	Data.Selectable = Parent:Selectable({
 		Text = Text,
-        LayoutOrder = -1 * LogCount,
-        Callback = SetFocused,
+		LayoutOrder = -1 * LogCount,
+		Callback = SetFocused,
 		TextColor3 = Color,
-		TextXAlignment = Enum.TextXAlignment.Left
-    })
+		TextXAlignment = Enum.TextXAlignment.Left,
+	})
 end
 
 return Ui
