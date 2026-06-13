@@ -3185,30 +3185,24 @@ This operation cannot be undone!]],
 							return
 						end
 						local ah = ad.Class
-						aa:CheckConfig(
-							ah,
-							{
-								Icon = "",
-								IconSize = UDim2.fromScale(1, 1),
-								IconRotation = 0,
-								IconPadding = UDim2.new(0, 2),
-							}
-						)
+						aa:CheckConfig(ah, {
+							Icon = "",
+							IconSize = UDim2.fromScale(1, 1),
+							IconRotation = 0,
+							IconPadding = UDim2.new(0, 2),
+						})
 						local aj = ag.Parent:FindFirstChild("UIPadding")
 						aa:SetPadding(aj, ah.IconPadding)
 						local ak = ah.Icon
 						ak = aa:CheckAssetUrl(ak)
 						local b = ad.WindowClass
 						ab:DynamicImageTag(ag, ak, b)
-						aa:SetProperties(
-							ag,
-							{
-								Visible = ag ~= "",
-								Image = aa:CheckAssetUrl(ak),
-								Size = ah.IconSize,
-								Rotation = ah.IconRotation,
-							}
-						)
+						aa:SetProperties(ag, {
+							Visible = ag ~= "",
+							Image = aa:CheckAssetUrl(ak),
+							Size = ah.IconSize,
+							Rotation = ah.IconRotation,
+						})
 					end,
 				},
 				{
@@ -3863,15 +3857,13 @@ This operation cannot be undone!]],
 			InputType = "StartAndEnd",
 			Callback = i,
 		}))
-		b.InputEnded:Connect(
-			u({
-				DraggingRequired = true,
-				UpdateState = true,
-				IsDragging = false,
-				InputType = "StartAndEnd",
-				Callback = m,
-			})
-		)
+		b.InputEnded:Connect(u({
+			DraggingRequired = true,
+			UpdateState = true,
+			IsDragging = false,
+			InputType = "StartAndEnd",
+			Callback = m,
+		}))
 		b.InputChanged:Connect(u({ DraggingRequired = true, InputType = "Movement", Callback = n }))
 	end
 	function aa:MakeDraggable(g)
@@ -5750,13 +5742,10 @@ This operation cannot be undone!]],
 				local J = aa:MergeMetatables(I, G)
 				function I:Column(K)
 					K = K or {}
-					aa:CheckConfig(
-						K,
-						{
-							HorizontalAlign = Enum.HorizontalAlignment.Left,
-							VerticalAlignment = Enum.VerticalAlignment.Top,
-						}
-					)
+					aa:CheckConfig(K, {
+						HorizontalAlign = Enum.HorizontalAlignment.Left,
+						VerticalAlignment = Enum.VerticalAlignment.Top,
+					})
 					local L = G.ColumnTemp:Clone()
 					local M = L:FindFirstChildOfClass("UIListLayout")
 					aa:SetProperties(M, K)
@@ -7314,7 +7303,7 @@ function Ui:LoadReGui()
 	ReGui:DefineTheme("SigmaSpy", ThemeConfig)
 
 	ReGui:Init({
-		Prefabs = InsertService:LoadLocalAsset(PrefabsId),
+		-- Prefabs = InsertService:LoadLocalAsset(PrefabsId),
 	})
 end
 
