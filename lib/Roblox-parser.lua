@@ -10,7 +10,7 @@ local Module = {
 	Author = "Depso",
 	License = "GNU-GPLv3",
 	Repository = "https://raw.githubusercontent.com/bangtmp/Sigma-Spy",
-	ImportUrl = "https://raw.githubusercontent.com/bangtmp/Sigma-Spy/refs/heads/main",
+	ImportUrl = "https://raw.githubusercontent.com/bangtmp/Sigma-Spy/refs/heads/main/lib",
 
 	Modules = {},
 }
