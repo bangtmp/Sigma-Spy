@@ -137,7 +137,7 @@ function Ui:LoadReGui()
 	local PrefabsId = "rbxassetid://114274480373566"
 	ReGui:DefineTheme("SigmaSpy", ThemeConfig)
 	ReGui:Init({
-		Prefabs = InsertService:LoadLocalAsset(PrefabsId),
+		-- Prefabs = InsertService:LoadLocalAsset(PrefabsId),
 	})
 end
 
